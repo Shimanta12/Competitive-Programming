@@ -35,6 +35,7 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
+    // Testing
     int n, k;
     cin >> n >> k;
     if(n==k){

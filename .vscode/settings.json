@@ -3,6 +3,7 @@
     "files.associations": {
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "numeric": "cpp"
     }
 }

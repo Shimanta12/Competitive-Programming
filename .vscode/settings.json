@@ -4,6 +4,9 @@
         "iosfwd": "cpp",
         "iostream": "cpp",
         "random": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "chrono": "cpp",
+        "span": "cpp",
+        "type_traits": "cpp"
     }
 }

@@ -7,50 +7,55 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
 const int MOD = 1e9 + 7;
+// const ll LARGE_MOD = 1e18 + 7; // Use this for problems with large modulus
 const int MAXN = 1e6 + 5;
 
 // ======================== BASIC MATH FUNCTIONS ========================
 
-// Safe modular multiplication to prevent overflow
-ll mod_mul(ll a, ll b, ll mod) {
-    return ((a % mod) * (b % mod)) % mod;
-}
-
-// More robust modular multiplication using __int128 (when available)
-ll safe_mod_mul(ll a, ll b, ll mod) {
-    #ifdef __SIZEOF_INT128__
-    return (__int128)a * b % mod;
-    #else
+// Binary multiplication for large modulus (like 1e18+7)
+// Prevents overflow when a*b might exceed long long range
+ll mul_mod(ll a, ll b, ll mod) {
     ll result = 0;
     a %= mod;
+    b %= mod;
     while (b > 0) {
-        if (b & 1) result = (result + a) % mod;
+        if (b & 1) {
+            result = (result + a) % mod;
+        }
         a = (a * 2) % mod;
         b >>= 1;
     }
     return result;
-    #endif
 }
 
-// Fast modular exponentiation: (base^exp) % mod
+// Regular modular multiplication (faster for smaller mod values)
+ll mod_mul(ll a, ll b, ll mod) {
+    return ((a % mod) * (b % mod)) % mod;
+}
+
+// Fast modular exponentiation with binary multiplication for large mod
 ll power(ll base, ll exp, ll mod = MOD) {
     ll result = 1;
     base %= mod;
     while (exp > 0) {
-        if (exp & 1) result = mod_mul(result, base, mod);
-        base = mod_mul(base, base, mod);
+        if (exp & 1) {
+            if (mod > 3e9) result = mul_mod(result, base, mod);
+            else result = (result * base) % mod;
+        }
+        if (mod > 3e9) base = mul_mod(base, base, mod);
+        else base = (base * base) % mod;
         exp >>= 1;
     }
     return result;
 }
 
-// Ultra-safe modular exponentiation for very large moduli
-ll safe_power(ll base, ll exp, ll mod) {
+// Alternative: Force binary multiplication regardless of mod size
+ll power_large_mod(ll base, ll exp, ll mod) {
     ll result = 1;
     base %= mod;
     while (exp > 0) {
-        if (exp & 1) result = safe_mod_mul(result, base, mod);
-        base = safe_mod_mul(base, base, mod);
+        if (exp & 1) result = mul_mod(result, base, mod);
+        base = mul_mod(base, base, mod);
         exp >>= 1;
     }
     return result;
@@ -112,11 +117,11 @@ void sieve() {
 // Check if a number is prime (Miller-Rabin for large numbers)
 bool miller_test(ll d, ll n) {
     ll a = 2 + rand() % (n - 4);
-    ll x = safe_power(a, d, n);
+    ll x = power_large_mod(a, d, n);
     if (x == 1 || x == n - 1) return true;
     
     while (d != n - 1) {
-        x = safe_mod_mul(x, x, n);
+        x = mul_mod(x, x, n);
         d *= 2;
         if (x == 1) return false;
         if (x == n - 1) return true;
@@ -314,17 +319,17 @@ ll discrete_log(ll a, ll b, ll m) {
         if (vals.find(cur) == vals.end()) {
             vals[cur] = i;
         }
-        cur = safe_mod_mul(cur, a, m);
+        cur = mul_mod(cur, a, m);
     }
     
-    ll factor = mod_inverse(safe_power(a, n, m), m);
+    ll factor = mod_inverse(power_large_mod(a, n, m), m);
     ll gamma = b;
     for (ll i = 0; i < n; i++) {
         if (vals.find(gamma) != vals.end()) {
             ll ans = vals[gamma] + i * n;
             if (ans < m) return ans;
         }
-        gamma = safe_mod_mul(gamma, factor, m);
+        gamma = mul_mod(gamma, factor, m);
     }
     
     return -1; // No solution
@@ -383,8 +388,12 @@ int main() {
 /*
 Usage Examples:
 
-1. Fast exponentiation: power(2, 10, MOD) or safe_power(2, 10, MOD)
-2. Modular multiplication: mod_mul(a, b, MOD) or safe_mod_mul(a, b, MOD)
+1. Fast exponentiation: 
+   - power(2, 10, MOD) - automatically handles large mod
+   - power_large_mod(2, 10, LARGE_MOD) - forces binary multiplication
+2. Modular multiplication:
+   - mod_mul(a, b, MOD) - for regular mod values (≤ 10^9)
+   - mul_mod(a, b, LARGE_MOD) - binary multiplication for large mod (≥ 10^18)
 3. Modular inverse: mod_inverse(5, MOD)
 4. Prime check: is_prime[n] or is_prime_large(n)
 5. Prime factors: prime_factors(n) or prime_factors_large(n)
@@ -396,15 +405,17 @@ Usage Examples:
 
 Time Complexities:
 - Sieve: O(N log log N)
-- Power/Safe Power: O(log exp)
-- Modular multiplication: O(1) with __int128, O(log b) without
+- Power: O(log exp) - uses binary multiplication when mod > 3×10^9
+- Binary multiplication (mul_mod): O(log b)
+- Regular multiplication (mod_mul): O(1)
 - Prime factorization: O(sqrt(N))
 - Miller-Rabin: O(k log^3 N)
 - Euler's totient: O(N log log N) preprocessing, O(sqrt(N)) single
 - CRT: O(N log(max moduli))
 
 Notes:
-- Use safe_power() and safe_mod_mul() when mod > 10^9 to prevent overflow
-- Regular power() and mod_mul() are faster for typical contest constraints
-- __int128 support automatically detected and used when available
+- power() automatically switches to binary multiplication for mod > 3×10^9
+- Use mul_mod() for large modulus values like 10^18 + 7
+- Use mod_mul() for typical contest constraints (mod ≤ 10^9)
+- Binary multiplication prevents overflow when a*b exceeds long long range
 */

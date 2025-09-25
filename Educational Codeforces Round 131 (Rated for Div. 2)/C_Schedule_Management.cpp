@@ -33,46 +33,41 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     const char* comma = strchr (names + 1, ',');
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
+int n, m;
 
-ll binMul(ll a, ll b, ll M){
-    ll ans = 0;
-    while(b > 0){
-        if(b&1){
-            ans = (ans + a)%M;
-        }
-        a = (a+a)%M;
-        b >>= 1;
+bool isPossible(int mid, map<int, int> &mp){
+    ll remTasks = 0;
+    ll cnt = (mid/2) * (n - mp.size());
+    for(auto pr : mp){
+        int canBeCompleted = min(mid, pr.second);
+        cnt += (mid - canBeCompleted)/2;
+        remTasks += (pr.second - canBeCompleted);
     }
-    return ans;
+    return cnt >= remTasks;
 }
-
-ll binExpo(ll a, ll b, ll M){
-    a = a % M;
-    ll ans = 1;
-    while(b > 0){
-        if(b&1){
-            ans = binMul(ans, a, M);
-        }
-        a = binMul(a, a, M);
-        b >>= 1;
-    }
-    return ans;
-}
-
 
 void solve(int tc) {
-    int n;
-    cin >> n;
-    for(int i=2; i*i <= n; i++){
-        while(n % i == 0){
-            cout << i << " ";
-            n/=i;
+    cin >> n >> m;
+    vector<int> tasks(m);
+    map<int, int> mp;
+    for(int i=0; i<m; i++){
+        cin >> tasks[i];
+        mp[tasks[i]]++;
+    }
+    int low  = 1, high = 2*m;
+    while(high - low > 1){
+        int mid = low + (high - low)/2;
+        if(isPossible(mid, mp)){
+            high = mid;
+        }else{
+            low = mid + 1;
         }
     }
-    if(n > 1){
-        cout << n << " ";
+    if(isPossible(low, mp)){
+        cout << low << endl;
+    }else{
+        cout << high << endl;
     }
-    cout << endl;
 }
 
 int main() {

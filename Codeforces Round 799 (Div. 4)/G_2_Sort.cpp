@@ -35,25 +35,27 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    int n;
-    ll s;
-    cin >> n >> s;
-    vector<int> v(n);
-    for(int i=0; i<n; i++){
+    int n, k;
+    cin >> n >> k;
+    vector<int> v(n+1);
+    v[0] = 0;
+    for(int i=1; i<=n; i++){
         cin >> v[i];
     }
-    ll sum = 0;
-    int l = 0;
-    int ans = 0;
-    for(int r = 0; r < n; r++){
-        sum += v[r];
-        while(sum > s){
-            sum -= v[l];
-            l++;
+    int l = 1;
+    int cnt = 0;
+    for(int r = 1; r <= n; r++){
+        if(v[r]*2 <= v[r-1]){
+            l = r;
+        }else{
+            int len = r - l + 1;
+            if(len > k){
+                cnt += (len - k);
+                l += (len - k);
+            }
         }
-        ans = max(ans, r - l + 1);
     }
-    cout << ans << endl;
+    cout << cnt << endl;
 }
 
 int main() {
@@ -62,7 +64,7 @@ int main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

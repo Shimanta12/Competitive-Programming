@@ -34,77 +34,40 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
 
-struct S{
-    vector<ll> v, gosagu = {0ll};
-
-    void push(ll x){
-        v.pb(x);
-        gosagu.pb(__gcd(gosagu.back(), x));
-    }
-
-    ll pop(){
-        ll res = v.back();
-        v.pop_back();
-        gosagu.pop_back();
-        return res;
-    }
-    bool empty(){
-        return v.size() == 0;
-    }
-
-    ll gcd(){
-        return gosagu.back();
-    }
-};
-
-S a, b;
-
-void add(ll x){
-    b.push(x);
-}
-
-void remove(){
-    if(a.empty()){
-        while(!b.empty()){
-            a.push(b.pop());
-        }
-    }
-    a.pop();
-}
-
-ll get_gosagu(){
-    return __gcd(a.gcd(), b.gcd());
-}
-
 void solve(int tc) {
-    int n;
-    cin >> n;
-    vector<ll> v(n);
-    for(int i=0; i<n; i++){
-        cin >> v[i];
+    int n, k;
+    cin >> n >> k;
+    if(n*n - k == 1){
+        cout << "NO" << endl;
+        return;
     }
-    int ans = INT_MAX;
-    int l = 0;
-    for(int r = 0; r < n; r++){
-        add(v[r]);
-        if(get_gosagu() == 1ll){
-            while(l < r){
-                remove();
-                if(get_gosagu() == 1ll){
-                    l++;
+    vector<vector<char>> ans(n, vector<char>(n, '0'));
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            if(k == 0){
+                if(j+1 < n && ans[i][j+1] == '0'){
+                    ans[i][j] = 'R';
+                }else if(j - 1 >= 0 && ans[i][j-1] == '0'){
+                    ans[i][j] = 'L';
+                }else if(i+1 < n && ans[i+1][j] == '0'){
+                    ans[i][j] = 'D';
+                }else if(i - 1 >= 0 && ans[i-1][j] == '0'){
+                    ans[i][j] = 'U';
                 }else{
-                    a.push(v[l]);
-                    break;
+                    ans[i][j] = 'L';
                 }
-
+            }else{
+                ans[i][j] = 'L';
+                k--;
             }
-            ans = min(ans, r - l + 1);
         }
     }
-    if(ans == INT_MAX){
-        cout << -1 << endl;
-    }else{
-        cout << ans << endl;
+    cout << "YES" << endl;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            cout << ans[i][j];
+        }
+        cout << endl;
     }
 }
 
@@ -114,7 +77,7 @@ int main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

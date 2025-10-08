@@ -34,78 +34,34 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
 
-struct S{
-    vector<ll> v, gosagu = {0ll};
-
-    void push(ll x){
-        v.pb(x);
-        gosagu.pb(__gcd(gosagu.back(), x));
-    }
-
-    ll pop(){
-        ll res = v.back();
-        v.pop_back();
-        gosagu.pop_back();
-        return res;
-    }
-    bool empty(){
-        return v.size() == 0;
-    }
-
-    ll gcd(){
-        return gosagu.back();
-    }
-};
-
-S a, b;
-
-void add(ll x){
-    b.push(x);
-}
-
-void remove(){
-    if(a.empty()){
-        while(!b.empty()){
-            a.push(b.pop());
-        }
-    }
-    a.pop();
-}
-
-ll get_gosagu(){
-    return __gcd(a.gcd(), b.gcd());
-}
-
 void solve(int tc) {
     int n;
     cin >> n;
-    vector<ll> v(n);
-    for(int i=0; i<n; i++){
-        cin >> v[i];
+    map<int, vector<int>> mp;
+    for(int i=0, x; i<n; i++){
+        cin >> x;
+        mp[x].pb(i);
     }
-    int ans = INT_MAX;
-    int l = 0;
-    for(int r = 0; r < n; r++){
-        add(v[r]);
-        if(get_gosagu() == 1ll){
-            while(l < r){
-                remove();
-                if(get_gosagu() == 1ll){
-                    l++;
-                }else{
-                    a.push(v[l]);
-                    break;
-                }
-
-            }
-            ans = min(ans, r - l + 1);
+    for(auto pr : mp){
+        if(pr.second.size() % pr.first){
+            cout << -1 << endl;
+            return;
         }
     }
-    if(ans == INT_MAX){
-        cout << -1 << endl;
-    }else{
-        cout << ans << endl;
+    vector<int> ans(n);
+    int num = 1;
+    for(auto pr : mp){
+        for(int i=0; i<pr.second.size(); i+=pr.first){
+            for(int j=i; j<i+pr.first; j++){
+                ans[pr.second[j]] = num;
+            }
+            num++;
+        }
     }
+    for(int i=0; i<n; i++){
+        cout << ans[i] << " ";
+    }
+    cout << endl;
 }
 
 int main() {
@@ -114,7 +70,7 @@ int main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

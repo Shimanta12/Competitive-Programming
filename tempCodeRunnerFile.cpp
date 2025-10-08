@@ -35,37 +35,12 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    int n;
-    ll s;
+    ll n, s;
     cin >> n >> s;
     vector<int> v(n);
     for(int i=0; i<n; i++){
         cin >> v[i];
     }
+    int ans = INT_MAX;
     ll sum = 0;
     int l = 0;
-    int ans = 0;
-    for(int r = 0; r < n; r++){
-        sum += v[r];
-        while(sum > s){
-            sum -= v[l];
-            l++;
-        }
-        ans = max(ans, r - l + 1);
-    }
-    cout << ans << endl;
-}
-
-int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-
-    int tc = 1;
-    
-    // cin >> tc;
-    for (int i = 1; i <= tc; i++) {
-        solve(i);
-    }
-
-    return 0;
-}

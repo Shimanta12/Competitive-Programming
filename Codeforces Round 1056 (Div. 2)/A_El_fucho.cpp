@@ -34,78 +34,25 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
 
-struct S{
-    vector<ll> v, gosagu = {0ll};
-
-    void push(ll x){
-        v.pb(x);
-        gosagu.pb(__gcd(gosagu.back(), x));
-    }
-
-    ll pop(){
-        ll res = v.back();
-        v.pop_back();
-        gosagu.pop_back();
-        return res;
-    }
-    bool empty(){
-        return v.size() == 0;
-    }
-
-    ll gcd(){
-        return gosagu.back();
-    }
-};
-
-S a, b;
-
-void add(ll x){
-    b.push(x);
-}
-
-void remove(){
-    if(a.empty()){
-        while(!b.empty()){
-            a.push(b.pop());
-        }
-    }
-    a.pop();
-}
-
-ll get_gosagu(){
-    return __gcd(a.gcd(), b.gcd());
-}
-
 void solve(int tc) {
     int n;
     cin >> n;
-    vector<ll> v(n);
-    for(int i=0; i<n; i++){
-        cin >> v[i];
-    }
-    int ans = INT_MAX;
-    int l = 0;
-    for(int r = 0; r < n; r++){
-        add(v[r]);
-        if(get_gosagu() == 1ll){
-            while(l < r){
-                remove();
-                if(get_gosagu() == 1ll){
-                    l++;
-                }else{
-                    a.push(v[l]);
-                    break;
-                }
-
-            }
-            ans = min(ans, r - l + 1);
+    int w = n, l = 0;
+    ll ans = 1;
+    while(w > 1 || l > 1){
+        int temp = 0;
+        if(w > 1){
+            ans += w/2;
+            temp = w/2;
+            w = (w+1)/2;
         }
+        if(l > 1){
+            ans += l/2;
+            l = (temp+1)/2;
+        }
+        l+= temp;
     }
-    if(ans == INT_MAX){
-        cout << -1 << endl;
-    }else{
-        cout << ans << endl;
-    }
+    cout << ans << endl;
 }
 
 int main() {
@@ -114,7 +61,7 @@ int main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

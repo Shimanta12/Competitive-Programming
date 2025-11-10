@@ -32,53 +32,51 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     const char* comma = strchr (names + 1, ',');
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
-const int mxN = 1e5 + 10;
-vector<vector<int>> tree(mxN);
-vector<int> par(mxN);
 
-void dfs(int src){
-    for(int adj : tree[src]){
-        if(adj == par[src]) continue;
-        par[adj] = src;
-        dfs(adj);
+const int mxN = 510;
+vector<vector<int>> dist(mxN, vector<int>(mxN));
+int n;
+
+vector<int> floyd_warshall(vector<int> &v){
+    vector<int> ans;
+
+    for(int k=0; k<n; k++){
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=n; j++){
+                dist[i][j] = min(dist[i][j], dist[i][v[k]] + dist[v[k]][j]);
+            }
+        }
+        int sum = 0;
+        for(int i=0; i<=k; i++){
+            for(int j=0; j<=k; j++){
+                int x = v[i], y = v[j];
+                sum += dist[x][y];
+            }
+        }
+        ans.pb(sum);
     }
+    reverse(all(ans));
+    return ans;
 }
 
 void solve(int tc) {
-    int n, m;
     cin >> n;
-    for(int i=0; i<n-1; i++){
-        int u, v;
-        cin >> u >> v;
-        tree[u].pb(v);
-        tree[v].pb(u);
-    }
-    int x, y;
-    cin >> x >> y;
-
-    dfs(1);
-    vector<int> a, b;
-    int temp = x;
-    while(temp != 0){
-        a.pb(temp);
-        temp = par[temp];
-    }
-    temp = y;
-    while(temp != 0){
-        b.pb(temp);
-        temp = par[temp];
-    }
-    sort(all(a));
-    sort(all(b));
-    int lca;
-    for(int i=0; i<min(sz(a), sz(b)); i++){
-        if(a[i] != b[i]){
-            break;
-        }else{
-            lca = a[i];
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            cin >> dist[i][j];
         }
     }
-    cout << lca << endl;
+
+    vector<int> v(n);
+    for(int i=0; i<n; i++){
+        cin >> v[i];
+    }
+    reverse(all(v));
+    auto ans = floyd_warshall(v);
+    for(int e : ans){
+        cout << e  << " ";
+    }
+    cout << endl;
 }
 
 int32_t main() {

@@ -32,53 +32,51 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     const char* comma = strchr (names + 1, ',');
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
-const int mxN = 1e5 + 10;
-vector<vector<int>> tree(mxN);
-vector<int> par(mxN);
-
-void dfs(int src){
-    for(int adj : tree[src]){
-        if(adj == par[src]) continue;
-        par[adj] = src;
-        dfs(adj);
-    }
-}
 
 void solve(int tc) {
-    int n, m;
-    cin >> n;
-    for(int i=0; i<n-1; i++){
-        int u, v;
-        cin >> u >> v;
-        tree[u].pb(v);
-        tree[v].pb(u);
+    int n, x;
+    cin >> n >> x;
+    vector<int> v(n);
+    for(int i=0; i<n; i++){
+        cin >> v[i];
     }
-    int x, y;
-    cin >> x >> y;
+    sort(all(v));
 
-    dfs(1);
-    vector<int> a, b;
-    int temp = x;
-    while(temp != 0){
-        a.pb(temp);
-        temp = par[temp];
-    }
-    temp = y;
-    while(temp != 0){
-        b.pb(temp);
-        temp = par[temp];
-    }
-    sort(all(a));
-    sort(all(b));
-    int lca;
-    for(int i=0; i<min(sz(a), sz(b)); i++){
-        if(a[i] != b[i]){
-            break;
+    int i=0, j=n-1;
+    int points = 0;
+    int sum = 0;
+    int level = 0;
+    vector<int> items;
+    while(i<=j){
+        int target = (level + 1) * x - sum;
+        if(v[j] >= target){
+            items.pb(v[j]);
+            points += v[j];
+            sum += v[j];
+            level++;
+            j--;
         }else{
-            lca = a[i];
+            target -= v[j];
+            while(i < j &&  target > 0){
+                target -= v[i];
+                sum += v[i];
+                items.pb(v[i]);
+                i++;
+            }
+            if(target <= 0){
+                points += v[j];
+                level++;
+            }
+            sum += v[j];
+            items.pb(v[j]);
+            j--;
         }
     }
-    cout << lca << endl;
+    cout << points << endl;
+    for(int e : items){
+        cout << e  << " ";
+    }
+    cout << endl;
 }
 
 int32_t main() {
@@ -87,7 +85,7 @@ int32_t main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

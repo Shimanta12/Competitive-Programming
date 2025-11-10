@@ -32,53 +32,32 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
     const char* comma = strchr (names + 1, ',');
     cout.write (names, comma - names) << " : " << arg1 << " | "; __f (comma + 1, args...);
 }
-const int mxN = 1e5 + 10;
-vector<vector<int>> tree(mxN);
-vector<int> par(mxN);
 
-void dfs(int src){
-    for(int adj : tree[src]){
-        if(adj == par[src]) continue;
-        par[adj] = src;
-        dfs(adj);
-    }
+int k;
+bool check(int mid){
+    int r = sqrtl(mid);
+    int cnt = mid - r;
+    return cnt >= k;
 }
 
 void solve(int tc) {
-    int n, m;
-    cin >> n;
-    for(int i=0; i<n-1; i++){
-        int u, v;
-        cin >> u >> v;
-        tree[u].pb(v);
-        tree[v].pb(u);
-    }
-    int x, y;
-    cin >> x >> y;
-
-    dfs(1);
-    vector<int> a, b;
-    int temp = x;
-    while(temp != 0){
-        a.pb(temp);
-        temp = par[temp];
-    }
-    temp = y;
-    while(temp != 0){
-        b.pb(temp);
-        temp = par[temp];
-    }
-    sort(all(a));
-    sort(all(b));
-    int lca;
-    for(int i=0; i<min(sz(a), sz(b)); i++){
-        if(a[i] != b[i]){
-            break;
+    cin >> k;
+    int low = 1, high = LLONG_MAX;
+    int ans;
+    while(high - low > 1){
+        int mid = low + (high - low)/2;
+        
+        if(check(mid)){
+            high = mid;
         }else{
-            lca = a[i];
+            low = mid + 1;
         }
     }
-    cout << lca << endl;
+    if(check(low)){
+        cout << low << endl;
+    }else{
+        cout << high << endl;
+    }
 }
 
 int32_t main() {
@@ -87,7 +66,7 @@ int32_t main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

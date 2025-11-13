@@ -7,7 +7,7 @@ const double PI = acos(-1);
 
 int d[8][2] = {{0, -1}, {0, 1}, { -1, 0}, {1, 0}, { -1, -1}, { -1, 1}, {1, 1}, {1, -1}};
 
-#define ll             long long
+#define int             long long
 
 #define endl           "\n"
 
@@ -19,7 +19,6 @@ int d[8][2] = {{0, -1}, {0, 1}, { -1, 0}, {1, 0}, { -1, -1}, { -1, 1}, {1, 1}, {
 #define pi             pair<int, int>
 #define F              first
 #define S              second
-#define mp             make_pair
 
 #define que_max        priority_queue <int>
 #define que_min        priority_queue <int, vi, greater<int>>
@@ -35,46 +34,40 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    int n;
-    cin >> n;
-    vector<int> v(n+1), prefix(n+1), suffix(n+2);
+    int n, q;
+    cin >> n >> q;
+    vector<int> v(n+1);
     for(int i=1; i<=n; i++){
         cin >> v[i];
     }
+    vector<int> queries(q);
+    for(int i=0; i<q; i++){
+        cin >> queries[i];
+    }
     map<int, int> mp;
-    map<int, vector<int>> pos;
     for(int i=1; i<=n; i++){
-        mp[v[i]]++;
-        pos[v[i]].pb(i);
-        if(mp[v[i]]>=v[i]){
-            int left_out = mp[v[i]]%v[i];
-            int cnt = mp[v[i]] - left_out;
-            prefix[i] = max(prefix[i-1], cnt + prefix[pos[v[i]][left_out] - 1]);
-        }else{
-            prefix[i] = prefix[i-1];
+        int cnt1 = i - 1;
+        int cnt2 = n - i;
+        int cnt = cnt1 + cnt2 + (cnt1 * cnt2);
+        mp[cnt]++;
+        int l = v[i]+1;
+        int r = l;
+        if(i+1 <= n){
+            r = v[i+1] - 1;
+        }
+        if(l <= r){
+            cnt = cnt2 + (cnt1 *cnt2);
+            mp[cnt] += r - l + 1;
         }
     }
-    mp.clear();
-    pos.clear();
-    for(int i=n; i>=1; i--){
-        mp[v[i]]++;
-        pos[v[i]].pb(i);
-        if(mp[v[i]]>=v[i]){
-            int left_out = mp[v[i]]%v[i];
-            int cnt = mp[v[i]] - left_out;
-            suffix[i] = max(suffix[i+1], cnt + suffix[pos[v[i]][left_out] + 1]);
-        }else{
-            suffix[i] = suffix[i+1];
-        }
+    
+    for(int e : queries){
+        cout << mp[e] << " ";
     }
-    int ans = 0;
-    for(int i=1; i<=n; i++){
-        ans = max(ans, prefix[i] + suffix[i+1]);
-    }
-    cout << ans << endl;
+    cout << endl;
 }
 
-int main() {
+int32_t main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 

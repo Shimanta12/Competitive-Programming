@@ -140,8 +140,8 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 //         int curr_x = curr.first;
 //         int curr_y = curr.second;
 //         for(int i=0; i<4; i++){
-//             int new_x = x + d[i][0];
-//             int new_y = y + d[i][1];
+//             int new_x = curr_x + d[i][0];
+//             int new_y = curr_y + d[i][1];
 //             if(is_inside(new_x, new_y) && !visited[new_x][new_y] && grid[new_x][new_y] == 1){
 //                 q.push({new_x, new_y});
 //                 visited[new_x][new_y] = true;
@@ -208,17 +208,13 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 // --------------------------------------------MSSP on Weighted graph--------------------------------
 const int mxN = 510;
 vector<vector<int>> dist(mxN, vector<int>(mxN, INT_MAX));
-void solve(int tc) {
-    int n, m;
-    cin >> n >> m;
-    while(m--){
-        int u, v, w;
-        cin >> u >> v >> w;
-        dist[u][v] = w;
-    }
+int n, m;
+
+void floyd_warshall(){
     for(int i=1; i<=n; i++){
         dist[i][i] = 0;
     }
+
     for(int k=1; k<=n; k++){
         for(int i=1; i<=n; i++){
             for(int j=1; j<=n; j++){
@@ -228,16 +224,10 @@ void solve(int tc) {
             }
         }
     }
-    for(int i=1; i<=n; i++){
-        for(int j=1; j<=n; j++){
-            if(dist[i][j] == INT_MAX){
-                cout << "I" << " ";
-            }else{
-                cout << dist[i][j] << " ";
-            }
-        }
-        cout << endl;
-    }
+}
+
+void solve(int tc) {
+    cin >> n >> m;
 }
 
 int32_t main() {

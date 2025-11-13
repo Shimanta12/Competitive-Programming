@@ -34,7 +34,30 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n, m, q;
+    cin >> n >> m >> q;
+    vector<int> v(m);
+    for(int i=0; i<m; i++){
+        cin >> v[i];
+    }
+    sort(all(v));
+    int ans;
+    while(q--){
+        int x;
+        cin >> x;
+        if(x < v[0]){
+            ans = v[0] - 1;
+        }else if(x > v[m-1]){
+            ans = n - v[m-1];
+        }else{
+            int idx = upper_bound(all(v), x) - v.begin();
+            int r = v[idx];
+            int l = v[idx - 1];
+            int cells = r - l - 1;
+            ans = (cells + 1)/2;
+        }
+        cout << ans << endl;
+    }
 }
 
 int32_t main() {

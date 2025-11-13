@@ -34,7 +34,55 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n, m;
+    cin >> n >> m;
+    string s;
+    cin >> s;
+    set<int> ans;
+    for(int i=0, x; i<m; i++){
+        cin >> x;
+        ans.insert(x);
+    }
+    vector<int> prefix(n);
+    for(int i=0; i<n; i++){
+        int curr = i-2 >= 0 ? prefix[i-2] : 1;
+        if(i-1 >= 0){
+            if(s[i-1] == 'A'){
+                curr++;
+            }else{
+                for(int i=curr+1; ; i++){
+                    if(ans.find(i) == ans.end()){
+                        curr = i;
+                        break;
+                    }
+                }
+            }
+        }
+        if(s[i] == 'A'){
+            curr++;
+            ans.insert(curr);
+        }else{
+            for(int i=curr+1; ; i++){
+                if(ans.find(i) == ans.end()){
+                    curr = i;
+                    break;
+                }
+            }
+            ans.insert(curr);
+            for(int i=curr+1; ; i++){
+                if(ans.find(i) == ans.end()){
+                    curr = i;
+                    break;
+                }
+            }
+        }
+        prefix[i] = curr;
+    }
+    cout << ans.size() << endl;
+    for(int e : ans){
+        cout << e << " ";
+    }
+    cout << endl;
 }
 
 int32_t main() {

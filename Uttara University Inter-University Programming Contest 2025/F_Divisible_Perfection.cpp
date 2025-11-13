@@ -34,7 +34,25 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    vector<int> prefix(n+1);
+    for(int i=1; i<=n; i++){
+        prefix[i] = prefix[i-1]*10 + (s[i-1] - '0');
+    }
+    for(int i=2; i<=9; i++){
+        for(int j=i; j<=n; j++){
+            int p = pow(10, i);
+            int num = prefix[j] % p;
+            if(num % i != 0){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+    }
+    cout << "YES" << endl;
 }
 
 int32_t main() {

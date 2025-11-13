@@ -34,7 +34,31 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n;
+    cin >> n;
+    string s1,s2;
+    cin >> s1 >> s2;
+    int track = -1, ans = 0;
+    for(int i=0; i<n; i++){
+        if(s1[i] > s2[i])
+            track = -1;
+        else if(s1[i]==s2[i]){
+            if(track == -1)
+                track = i;
+        }
+        else{
+            ans+=n-i;
+            int left = 0, right = 0;
+            if(track!=-1){
+                left = i-track;
+                right = n-i;
+            }
+            int mul = left * right;
+            ans+=mul;
+            track = -1;
+        }
+    }
+    cout << ans << endl;
 }
 
 int32_t main() {
@@ -43,7 +67,7 @@ int32_t main() {
 
     int tc = 1;
     
-    cin >> tc;
+    // cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

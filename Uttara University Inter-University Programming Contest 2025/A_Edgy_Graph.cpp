@@ -34,7 +34,30 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n, m;
+    cin >> n >> m;
+    vector<int> ans(n+1, 1e9);
+    vector<vector<pair<int, int>>> graph(n+1);
+    for(int i=0; i<m; i++){
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].pb({v, w});
+        graph[v].pb({u, w});
+        ans[u] = min(ans[u], w);
+        ans[v] = min(ans[v], w);
+    }
+    for(int i=1; i<=n; i++){
+        for(auto &[adj, cost] : graph[i]){
+            if(max(ans[i], ans[adj]) != cost){
+                cout << -1 << endl;
+                return;
+            }
+        }
+    }
+    for(int i=1; i<=n; i++){
+        cout << ans[i] << " ";
+    }
+    cout << endl;
 }
 
 int32_t main() {

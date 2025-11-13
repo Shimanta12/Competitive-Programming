@@ -34,7 +34,33 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 }
 
 void solve(int tc) {
-    
+    int n;
+    cin >> n;
+    int ar[n];
+    for(int i=0; i<n; i++)
+        cin >> ar[i];
+    int sum = 0, cnt =  0, last = 0, ans = 0;
+    for(int i=0; i<n; i++){
+        if(ar[i] == -1){
+            cnt++;
+            int mm = 1e9;
+            ans = max(ans, sum+cnt*mm);
+        }
+        else if(ar[i] >= last){
+            int extra = cnt * ar[i];
+            sum+=extra+ar[i];
+            cnt = 0;
+            ans = max(sum, ans);
+            last = ar[i];
+        }
+        else{
+            sum = cnt*ar[i] + ar[i];
+            ans = max(ans, sum);
+            cnt = 0;
+            last = ar[i];
+        }
+    }
+    cout << ans << endl;
 }
 
 int32_t main() {

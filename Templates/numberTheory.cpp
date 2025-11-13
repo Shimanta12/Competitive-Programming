@@ -47,8 +47,8 @@ template <class T> class Math {
         vector<vector<int>> divisors;
         int N;
         T MOD_VAL;
-        bool useBinMul;
-        bool isPrimeMod;
+        bool useBinMul;  // flag for when MOD is large (near 1e18)
+        bool isPrimeMod;  // flag for when MOD is prime
         
         Math() {}
         
@@ -56,6 +56,7 @@ template <class T> class Math {
             fact.resize(n);
             invfact.resize(n);
             
+            // Precompute factorials
             fact[0] = 1;
             for (int i = 1; i < n; i++) {
                 if (useBinMul) {
@@ -65,6 +66,7 @@ template <class T> class Math {
                 }
             }
             
+            // Precompute inverse factorials (better method)
             invfact[n-1] = modinv(fact[n-1], MOD_VAL);
             for (int i = n-2; i >= 0; i--) {
                 if (useBinMul) {
@@ -75,6 +77,7 @@ template <class T> class Math {
             }
         }
         
+        // Binary multiplication for large MOD (near 1e18)
         T binMul(T a, T b, T m) {
             T ans = 0;
             a %= m;
@@ -86,8 +89,9 @@ template <class T> class Math {
                 b >>= 1;
             }
             return ans;
-}
+        }
         
+        // Fast modular exponentiation
         T expo(T base, T exp, T m) {
             T res = 1;
             base %= m;
@@ -109,36 +113,12 @@ template <class T> class Math {
             return res;
         }
         
-        T extGCD(T a, T b, T &x, T &y) {
-            if (b == 0) {
-                x = 1;
-                y = 0;
-                return a;
-            }
-            T x1, y1;
-            T gcd = extGCD(b, a % b, x1, y1);
-            x = y1;
-            y = x1 - (a / b) * y1;
-            return gcd;
+        // Modular inverse using Fermat's little theorem
+        T modinv(T x, T m) { 
+            return expo(x, m - 2, m); 
         }
         
-        T modInverseExtGCD(T a, T m) {
-            T x, y;
-            T gcd = extGCD(a, m, x, y);
-            if (gcd != 1) {
-                return -1;
-            }
-            return (x % m + m) % m;
-        }
-        
-        T modinv(T x, T m) {
-            if (isPrimeMod) {
-                return expo(x, m - 2, m);
-            } else {
-                return modInverseExtGCD(x, m);
-            }
-        }
-        
+        // Binomial coefficient nCr
         T choose(T n, T k) {
             if (k < 0 || k > n)
                 return 0;
@@ -153,6 +133,7 @@ template <class T> class Math {
             return ans;
         }
         
+        // Permutation nPr
         T perm(T n, T k) {
             if (k < 0 || k > n)
                 return 0;
@@ -165,6 +146,7 @@ template <class T> class Math {
             return ans;
         }
         
+        // Sieve of Eratosthenes with lowest prime factor
         void sieve(int mxN) {
             isPrime.assign(mxN + 1, true);
             lp.assign(mxN + 1, 0);
@@ -183,6 +165,8 @@ template <class T> class Math {
             }
         }
         
+        // Prime factorization using lowest prime factor
+        // Returns vector of {prime, power}
         vector<pair<int, int>> factorizeLP(int n) {
             vector<pair<int, int>> factors;
             while (n > 1) {
@@ -197,6 +181,7 @@ template <class T> class Math {
             return factors;
         }
         
+        // Get unique prime factors
         vector<int> uniquePrimeFactors(int n) {
             vector<int> primes;
             while (n > 1) {
@@ -209,6 +194,7 @@ template <class T> class Math {
             return primes;
         }
         
+        // Precompute divisors, count of divisors, and sum of divisors for all numbers up to n
         void precomputeDivisors(int n) {
             divisors.assign(n + 1, vector<int>());
             numDivisors.assign(n + 1, 0);
@@ -223,6 +209,7 @@ template <class T> class Math {
             }
         }
         
+        // Euler's totient function φ(n) using lowest prime
         int phi(int n) {
             int result = n;
             int temp = n;
@@ -236,10 +223,12 @@ template <class T> class Math {
             return result;
         }
         
+        // LCM using built-in __gcd
         T lcm(T a, T b) {
             return (a / __gcd(a, b)) * b;
         }
         
+        // Check if n is prime (Miller-Rabin for large n)
         bool isPrimeNum(int n) {
             if (n < 2) return false;
             if (n == 2) return true;
@@ -273,7 +262,53 @@ template <class T> class Math {
 };
 
 void solve(int tc) {
+    // Example 1: Standard MOD (1e9+7)
+    Math<int> m1(1e5 + 1);
+    cout << "Standard MOD (1e9+7):\n";
+    cout << "C(10, 2) = " << m1.choose(10, 2) << "\n";
+    cout << "P(10, 2) = " << m1.perm(10, 2) << "\n\n";
     
+    // Example 2: Large MOD (1e18+7) - requires binary multiplication
+    const int LARGE_MOD = 1000000000000000007LL;
+    Math<int> m2(1e5 + 1, LARGE_MOD, true);  // useBinaryMul = true
+    cout << "Large MOD (1e18+7) with binary multiplication:\n";
+    cout << "C(10, 2) = " << m2.choose(10, 2) << "\n";
+    cout << "P(10, 2) = " << m2.perm(10, 2) << "\n\n";
+    
+    // Sieve
+    m1.sieve(100);
+    cout << "Is 97 prime? " << (m1.isPrime[97] ? "Yes" : "No") << "\n";
+    cout << "Lowest prime factor of 60: " << m1.lp[60] << "\n\n";
+    
+    // Prime factorization
+    int num = 60;
+    auto factors = m1.factorizeLP(num);
+    cout << "Prime factorization of " << num << ": ";
+    for (auto [p, e] : factors) {
+        cout << p << "^" << e << " ";
+    }
+    cout << "\n";
+    
+    auto uniquePrimes = m1.uniquePrimeFactors(num);
+    cout << "Unique prime factors of " << num << ": ";
+    for (int p : uniquePrimes) {
+        cout << p << " ";
+    }
+    cout << "\n\n";
+    
+    // Precompute divisors
+    m1.precomputeDivisors(100);
+    cout << "Divisors of 60: ";
+    for (int d : m1.divisors[60]) cout << d << " ";
+    cout << "\n";
+    cout << "Count of divisors: " << m1.numDivisors[60] << "\n";
+    cout << "Sum of divisors: " << m1.sumDivisors[60] << "\n\n";
+    
+    // Euler's totient
+    cout << "φ(60) = " << m1.phi(60) << "\n\n";
+    
+    // LCM using __gcd
+    cout << "lcm(48, 18) = " << m1.lcm(48, 18) << "\n";
 }
 
 int32_t main() {

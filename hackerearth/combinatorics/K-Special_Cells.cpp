@@ -261,13 +261,31 @@ template <class T> class Math {
         }
 };
 
+Math<int> mth(2e5 + 5);
+
 void solve(int tc) {
-    Math<int> m;
-    m.sieve(1e5 + 5);
-    for(int i=0; i<=100; i++){
-        cout << m.isPrime[i] << " ";
+    int n, m, k;
+    cin >> n >> m >> k;
+    int ans = 0;
+    while(k--){
+        int x, y, p;
+        cin >> x >> y >> p;
+
+        int downMoves = x - 1, rightMoves = y - 1;
+        int ways1 = mth.fact[downMoves + rightMoves];
+        ways1 = mod(ways1 * mth.invfact[downMoves]);
+        ways1 = mod(ways1 * mth.invfact[rightMoves]);
+        
+        downMoves = n - x, rightMoves = m - y;
+        int ways2 = mth.fact[downMoves + rightMoves];
+        ways2 = mod(ways2 * mth.invfact[downMoves]);
+        ways2 = mod(ways2 * mth.invfact[rightMoves]);
+
+        int ways = mod(ways1 * ways2);
+        int strength = mod(ways * p);
+        ans = mod(ans + strength);
     }
-    cout << endl;
+    cout << ans << endl;
 }
 
 int32_t main() {
@@ -276,7 +294,7 @@ int32_t main() {
 
     int tc = 1;
     
-    // cin >> tc;
+    cin >> tc;
     for (int i = 1; i <= tc; i++) {
         solve(i);
     }

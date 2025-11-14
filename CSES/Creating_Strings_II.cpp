@@ -262,12 +262,22 @@ template <class T> class Math {
 };
 
 void solve(int tc) {
-    Math<int> m;
-    m.sieve(1e5 + 5);
-    for(int i=0; i<=100; i++){
-        cout << m.isPrime[i] << " ";
+    Math<int> m(1e6+1);
+    string s;
+    cin >> s;
+    int n = s.size();
+    map<char, int> mp;
+    for(char c : s){
+        mp[c]++;
+    } 
+    int ans = m.fact[n];
+    for(auto pr : mp){
+        if(pr.second > 1){
+            int inv = m.invfact[pr.second];
+            ans = mod(ans * inv);
+        }
     }
-    cout << endl;
+    cout << ans << endl;
 }
 
 int32_t main() {

@@ -58,7 +58,7 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 // void bfs(int src){
 //     queue<int> q;
 //     q.push(src);
-//     visited[src] = 0;
+//     visited[src] = true;
 //     parent[src] = -1;
 
 //     while(!q.empty()){
@@ -85,7 +85,7 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 // int n;
 
 
-// bool tree_dfs(int src){
+// void tree_dfs(int src){
 //     // dp[src] = ;
 //     for(int adj : tree[src]){
 //         if(adj == parent[src]) continue;
@@ -158,7 +158,7 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 // const int mxN = 1e5 + 10;
 // vector<vector<pair<int, int>>> graph(mxN);
 // vector<bool> visited(mxN);
-// vector<int> dist(mxN, INT_MAX);
+// vector<int> dist(mxN, LLONG_MAX);
 // int n, m;
 
 // void bfs_0_1(int src){
@@ -207,7 +207,7 @@ void __f (const char* names, Arg1&& arg1, Args&&... args) {
 
 // --------------------------------------------MSSP on Weighted graph--------------------------------
 const int mxN = 510;
-vector<vector<int>> dist(mxN, vector<int>(mxN, INT_MAX));
+vector<vector<int>> dist(mxN, vector<int>(mxN, LLONG_MAX));
 int n, m;
 
 void floyd_warshall(){
@@ -219,7 +219,7 @@ void floyd_warshall(){
         for(int i=1; i<=n; i++){
             for(int j=1; j<=n; j++){
                 if(i==j) continue;
-                if(dist[i][k] == INT_MAX || dist[k][j] == INT_MAX) continue;
+                if(dist[i][k] == LLONG_MAX || dist[k][j] == LLONG_MAX) continue;
                 dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
             }
         }

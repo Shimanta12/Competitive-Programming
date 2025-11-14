@@ -83,7 +83,7 @@ void solve(int tc) {
             }
         }
     }
-    cout << ans << endl;
+    cout << "Case " << tc << ": "<< ans << endl;
 }
 
 int32_t main() {
